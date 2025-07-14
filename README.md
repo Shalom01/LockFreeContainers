@@ -21,11 +21,7 @@ A **C++** library of classic *lock-free* data structures for learning, benchmark
 ```bash
 # Clone the repository
 git clone https://github.com/Shalom01/LockFreeContainers.git
-cd <repo>
-
-# Navigate to the build folder
-cmake .
-make            # builds unit tests
-
-# Run the test suite
-./{name}_test # replace {name} with the structure of interest.
+cd <repo>/build
+cmake .         # call CMake to generate the project MakeFile
+make            # Build the unit tests using Make
+./{name}_test # Runt the test; replace {name} with the structure of interest.
