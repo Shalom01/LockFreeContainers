@@ -1,26 +1,31 @@
-# Lock‑Free Data Structures
+# Lock-Free Data Structures
 
-A small, work‑in‑progress library of classic lock‑free data structures aimed at teaching and experimentation.
+A **C++** library of classic *lock-free* data structures for learning, benchmarking, and experimentation.
 
-# Implemented
+---
 
-Treiber Stack – implemented in C++ with std::shared_ptr for automatic, exception‑safe memory management.
+## Implemented
 
-# Roadmap
+- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management.
 
-Fomitchev & Ruppert lock‑free linked list
+## Roadmap
 
-Natarajan & Mittal lock‑free binary search tree
+- **Fomitchev & Ruppert** lock-free linked list  
+- **Natarajan & Mittal** lock-free binary search tree  
+- **Lock-free self-adjusting** (move-to-front) list  
 
-Lock‑free self‑adjusting (move‑to‑front) list
+---
 
-# Building & Running Tests
+## Building & Running Tests
 
-# from the project root
-cd bin
-make          # builds unit tests
-./{name}_test   # run test suite, replace {name} with the structure of interest
+```bash
+# Clone the repository
+git clone https://github.com/<your-user>/<repo>.git
+cd <repo>
 
-# Why lock‑free?
+# Navigate to the build folder
+cmake ..
+make            # builds unit tests
 
-Lock‑free algorithms guarantee global system progress even when individual threads are delayed or suspended. They are attractive for high‑concurrency, low‑latency systems.
+# Run the test suite
+./{name}_test # replace {name} with the structure of interest.
