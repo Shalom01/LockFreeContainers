@@ -20,7 +20,7 @@ A **C++** library of classic *lock-free* data structures for learning, benchmark
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-user>/<repo>.git
+git clone https://github.com/Shalom01/LockFreeContainers.git
 cd <repo>
 
 # Navigate to the build folder
