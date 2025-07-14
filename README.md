@@ -24,7 +24,7 @@ git clone https://github.com/Shalom01/LockFreeContainers.git
 cd <repo>
 
 # Navigate to the build folder
-cmake ..
+cmake .
 make            # builds unit tests
 
 # Run the test suite
