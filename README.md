@@ -24,4 +24,4 @@ git clone https://github.com/Shalom01/LockFreeContainers.git
 cd <repo>/build
 cmake .         # call CMake to generate the project MakeFile
 make            # Build the unit tests using Make
-./{name}_test # Runt the test; replace {name} with the structure of interest.
+./{name}_test # Runt the test; replace {name} with wanted structure
