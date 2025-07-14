@@ -1,0 +1,4 @@
+/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/build/CMakeFiles/stack_test.dir
+/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/build/CMakeFiles/stack_library.dir
+/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/build/CMakeFiles/edit_cache.dir
+/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/build/CMakeFiles/rebuild_cache.dir
