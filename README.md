@@ -10,7 +10,7 @@ A **C++** library of classic *lock-free* data structures for learning, benchmark
 
 ## Roadmap
 
-- **Fomitchev & Ruppert** lock-free linked list  
+- **Fomitchev & Ruppert** lock-free linked list  - IN PROGRESS
 - **Natarajan & Mittal** lock-free binary search tree  
 - **Lock-free self-adjusting** (move-to-front) list  
 
