@@ -8,21 +8,21 @@
 
 namespace LockFree {
 
-template <typename T>
+template <typename V>
 class stack {
 public:
     stack();
     ~stack();
 
-    void push(T value);
-    T pop();
+    void push(V value);
+    V pop();
     void print();
 
 private:
     struct Node {
-        T data;
+        V value;
         std::shared_ptr<Node> next;
-        explicit Node(const T& d) : data(d), next(nullptr) {}
+        explicit Node(const V& v) : value(v), next(nullptr) {}
     };
 
     std::shared_ptr<Node> head; // Head pointer to the top of the stack

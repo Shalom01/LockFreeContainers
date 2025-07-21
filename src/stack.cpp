@@ -2,19 +2,19 @@
 
 namespace LockFree {
 
-template <typename T>
-stack<T>::stack() = default;
+template <typename V>
+stack<V>::stack() = default;
 
-template <typename T>
-stack<T>::~stack() = default;
+template <typename V>
+stack<V>::~stack() = default;
 
 /*
 * This routine pushes a new value onto the stack.
 * It creates a new node, sets its data, and uses compare-and-swap (CAS) to update the head pointer atomically.
 */
 
-template <typename T>
-void stack<T>::push(T value) {
+template <typename V>
+void stack<V>::push(V value) {
     std::shared_ptr<Node> new_head = std::make_shared<Node>(value);
     std::shared_ptr<Node> old_head;
     do {
@@ -29,8 +29,8 @@ void stack<T>::push(T value) {
 * If the stack is empty, it throws an exception.
 */
 
-template <typename T>
-T stack<T>::pop() {
+template <typename V>
+V stack<V>::pop() {
     try{
         std::shared_ptr<Node> old_head;
         std::shared_ptr<Node> next;
@@ -43,7 +43,7 @@ T stack<T>::pop() {
     } catch (const std::exception& e) {
         std::cerr << "Pop failure: " << e.what() << std::endl;
     }
-    return T(); // Return default value if stack is empty
+    return V(); // Return default value if stack is empty
 }
 
 /*
@@ -52,8 +52,8 @@ T stack<T>::pop() {
 * WARNING: not thread-safe, this function is for testing purposes only
 */
 
-template <typename T>
-void stack<T>::print() { 
+template <typename V>
+void stack<V>::print() { 
     std::shared_ptr<Node> current = std::atomic_load(&head); // Start from the head of the stack
 
     if (!current) { // Print an empty stack message
