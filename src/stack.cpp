@@ -1,8 +1,6 @@
 #include "../include/my_library/stack.h"
 
-using namespace Stack:
-
-namespace LockFree {
+using namespace Stack;
 
 template <typename V>
 stack<V>::stack() = default;
@@ -70,6 +68,4 @@ void stack<V>::print() {
         if (current) { std::cout << ", "; } // Print a comma if there are more elements=     
     }
     std::cout << "}" << std::endl;
-}
-
 }
