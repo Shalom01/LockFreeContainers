@@ -1,5 +1,7 @@
 #include "../include/my_library/stack.h"
 
+using namespace Stack:
+
 namespace LockFree {
 
 template <typename V>

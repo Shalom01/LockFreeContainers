@@ -6,7 +6,7 @@
 #include <stdexcept> // For exception handling
 #include <memory> // For smart pointers
 
-namespace LockFree {
+namespace Stack{
 
 template <typename V>
 class stack {
@@ -28,6 +28,6 @@ private:
     std::shared_ptr<Node> head; // Head pointer to the top of the stack
 };
 
-}
+} //namespace Stack
 
 #endif // STACK_H
