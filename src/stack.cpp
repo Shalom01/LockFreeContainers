@@ -39,7 +39,7 @@ V stack<V>::pop() {
             if (!old_head) { throw std::runtime_error("Stack is empty"); } // If the stack is empty, throw an exception
             next = old_head->next;
         } while (!std::atomic_compare_exchange_strong(&head, &old_head, next)); // Attempt to pop the top node 
-        return old_head->data;
+        return old_head->value;
     } catch (const std::exception& e) {
         std::cerr << "Pop failure: " << e.what() << std::endl;
     }
@@ -63,7 +63,7 @@ void stack<V>::print() {
 
     std::cout << "Stack contents: {";
     while (current) { // Print the contents of the stack
-        std::cout << current->data;        
+        std::cout << current->value;        
         current = current->next;
         if (current) { std::cout << ", "; } // Print a comma if there are more elements=     
     }

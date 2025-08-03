@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/stack_test.dir/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/test/stack.cpp.o -o stack_test  libstack_library.a
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/stack_test.dir/link.d CMakeFiles/stack_test.dir/home/shalom/Documents/Programming/LockFreeContainers/test/stack.cpp.o -o stack_test  libstack_library.a

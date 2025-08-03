@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/src/stack.cpp" "CMakeFiles/stack_library.dir/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/src/stack.cpp.o" "gcc" "CMakeFiles/stack_library.dir/home/shalom/Documents/SoftwareProjects/Concurrency/C++/lockfree/src/stack.cpp.o.d"
+  "/home/shalom/Documents/Programming/LockFreeContainers/src/stack.cpp" "CMakeFiles/stack_library.dir/home/shalom/Documents/Programming/LockFreeContainers/src/stack.cpp.o" "gcc" "CMakeFiles/stack_library.dir/home/shalom/Documents/Programming/LockFreeContainers/src/stack.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

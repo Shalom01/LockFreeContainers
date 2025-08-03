@@ -8,7 +8,7 @@
 
 int main(){
 
-    LockFree::stack<int> stack;
+    Stack::stack<int> stack;
     std::vector<std::thread> threads;
 
 
