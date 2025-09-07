@@ -6,7 +6,7 @@ A **C++** library of classic *lock-free* data structures for learning, benchmark
 
 ## Implemented
 
-- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management and handling the ABA problem.
+- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management and ABA mitigation.
 
 ## Roadmap
 - **Michael's Hazard Pointers** - to replace `std::shared_ptr` for more optimal SMR.
