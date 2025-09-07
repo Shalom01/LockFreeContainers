@@ -6,14 +6,12 @@ A **C++** library of classic *lock-free* data structures for learning, benchmark
 
 ## Implemented
 
-- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management.
+- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management and ABA mitigation.
 
 ## Roadmap
-
-- **Fomitchev & Ruppert** lock-free linked list  - IN PROGRESS
-- **Natarajan & Mittal** lock-free binary search tree  
-- **Lock-free self-adjusting** (move-to-front) list  
-
+- **Michael's Hazard Pointers** - to replace `std::shared_ptr` for more optimal SMR.
+- **Fomitchev & Ruppert Lock-Free Linked List**
+- **Asbell & Ruppert Self-Adjusting List**
 ---
 
 ## Building & Running Tests
@@ -24,4 +22,4 @@ git clone https://github.com/Shalom01/LockFreeContainers.git
 cd <repo>/build
 cmake .         # call CMake to generate the project MakeFile
 make            # Build the unit tests using Make
-./{name}_test # Run the test; replace {name} with wanted structure
+./{name}_test # Run the test; replace {name} with wanted structure (e.g., "stack")
