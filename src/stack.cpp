@@ -15,12 +15,12 @@ stack<V>::~stack() = default;
 
 template <typename V>
 void stack<V>::push(V value) {
-    std::shared_ptr<Node> new_head = std::make_shared<Node>(value);
+    auto new_head = std::make_shared<Node>(std::move(value)); //make a shared_ptr for the node, and copy over the new value
     std::shared_ptr<Node> old_head;
     do {
-        old_head = std::atomic_load(&head); // Load the current head
-        new_head->next = old_head;
-    } while (!std::atomic_compare_exchange_strong(&head, &old_head, new_head)); // Push the new node onto the stack using CAS.
+        old_head = head.load(); // load the node pointed to by the head
+        new_head->next = old_head; //point the new head to the old head
+    } while (!head.compare_exchange_strong(old_head, new_head)); // push the new node onto the stack using CAS.
 }
 
 /*
@@ -35,10 +35,10 @@ V stack<V>::pop() {
         std::shared_ptr<Node> old_head;
         std::shared_ptr<Node> next;
         do {
-            old_head = std::atomic_load(&head); // Load the node pointed by head
+            old_head = head.load(); // Load the node pointed by head
             if (!old_head) { throw std::runtime_error("Stack is empty"); } // If the stack is empty, throw an exception
             next = old_head->next;
-        } while (!std::atomic_compare_exchange_strong(&head, &old_head, next)); // Attempt to pop the top node 
+        } while (!head.compare_exchange_strong(old_head, next)); // Attempt to pop the top node
         return old_head->value;
     } catch (const std::exception& e) {
         std::cerr << "Pop failure: " << e.what() << std::endl;
@@ -54,7 +54,7 @@ V stack<V>::pop() {
 
 template <typename V>
 void stack<V>::print() { 
-    std::shared_ptr<Node> current = std::atomic_load(&head); // Start from the head of the stack
+    std::shared_ptr<Node> current = head.load(); // Start from the head of the stack
 
     if (!current) { // Print an empty stack message
         std::cout << "Stack is empty." << std::endl;

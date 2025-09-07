@@ -9,7 +9,7 @@
 int main(){
 
     Stack::stack<int> stack;
-    std::vector<std::thread> threads;
+    std::vector<std::thread> threads; //vector for storing threads of control
 
 
     // ---------- 1. Sequential behaviour ----------
@@ -25,7 +25,7 @@ int main(){
 
 
     //Testing push operation with multiple threads
-    for(int i = 0; i < 4; ++i) {
+    for(int i = 0; i < 10; ++i) {
         threads.emplace_back(push, i);
     }  
 
@@ -37,7 +37,7 @@ int main(){
     threads.clear(); // Clear the vector for new threads
 
     //Testing pop operation with multiple threads
-    for(int i = 0; i < 4; ++i) {
+    for(int i = 0; i < 10; ++i) {
         threads.emplace_back(pop);
     }
 
@@ -49,7 +49,7 @@ int main(){
     threads.clear(); // Clear the vector for new threads
 
     //Testing push/pop operation with multiple threads
-    for(int i = 0; i < 4; ++i) {
+    for(int i = 0; i < 10; ++i) {
         if(i % 2 == 0) {
             stack.push(i);
         } else {
