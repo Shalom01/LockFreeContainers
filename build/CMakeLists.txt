@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10) #required version of CMake
 project(lock_free) #project name
 
 
-set(CMAKE_CXX_STANDARD 17) # C++ standard to use
+set(CMAKE_CXX_STANDARD 20) # C++ standard to use
 set(CMAKE_CXX_STANDARD_REQUIRED True) # enforce C++ standard
 
 
