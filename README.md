@@ -6,14 +6,12 @@ A **C++** library of classic *lock-free* data structures for learning, benchmark
 
 ## Implemented
 
-- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management.
+- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management and handling the ABA problem.
 
 ## Roadmap
-
-- **Fomitchev & Ruppert** lock-free linked list  - IN PROGRESS
-- **Natarajan & Mittal** lock-free binary search tree  
-- **Lock-free self-adjusting** (move-to-front) list  
-
+- **Michael's Hazard Pointers** - to replace `std::shared_ptr` more optimal SMR.
+- **Fomitchev & Ruppert Lock-Free Linked List**
+- **Asbell & Ruppert Self-Adjusting List**
 ---
 
 ## Building & Running Tests
