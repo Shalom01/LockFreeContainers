@@ -6,5 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/home/shalom/Documents/Programming/LockFreeContainers/build/../include/my_library
 
-CXX_FLAGS = -std=gnu++20
+CXX_FLAGS = -std=gnu++20 -save-temps=obj -fverbose-asm -masm=intel
 

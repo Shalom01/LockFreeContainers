@@ -3,7 +3,9 @@
 using namespace Stack;
 
 template <typename V>
-stack<V>::stack() = default;
+stack<V>::stack() {
+    std::cout << head.is_lock_free() << std::endl;
+};
 
 template <typename V>
 stack<V>::~stack() = default;

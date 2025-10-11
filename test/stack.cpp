@@ -11,7 +11,6 @@ int main(){
     Stack::stack<int> stack;
     std::vector<std::thread> threads; //vector for storing threads of control
 
-
     // ---------- 1. Sequential behaviour ----------
 
     auto push = [&stack](int value) {
