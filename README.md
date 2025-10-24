@@ -6,13 +6,17 @@ A **C++** library of classic *lock-free* data structures for learning, benchmark
 
 ## Implemented
 
-- **Treiber Stack** – uses `std::shared_ptr` for automatic, exception-safe memory management and ABA mitigation.
+### Treiber Stack
+A lock-free stack based on Treiber’s algorithm that uses `std::shared_ptr` for automatic, exception-safe memory management and partial ABA mitigation. Although `std::shared_ptr` is not lock-free, future versions will replace it with a lock-free SMR for true non-blocking performance.
+
+### SPSC Queue
+A single-producer, single-consumer queue. Designed for efficient, wait-free communication between one producer and one consumer thread.
 
 ## Roadmap
-- **Michael's Hazard Pointers** - to replace `std::shared_ptr` for faster SMR.
+- **Michael's Hazard Pointers** - to replace `std::shared_ptr` for faster SMR
 - **Fomitchev & Ruppert Lock-Free Linked List**
 - **Asbell & Ruppert Self-Adjusting List**
----
+- **Brown's EBR** - to compare with Hazard Pointers.
 
 ## Building & Running Tests
 
