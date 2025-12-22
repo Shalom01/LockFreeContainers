@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/test_stack.dir/home/shalom/Documents/SoftwareProjects/Concurrency/C++/LockFreeContainers/test/stack.cpp.o -o test_stack  libcontainers_lib.a

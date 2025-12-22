@@ -1,24 +1,39 @@
 
 cmake_minimum_required(VERSION 3.10) #required version of CMake
-project(lock_free) #project name
+project(lock_free
+    VERSION 0.0.0
+    LANGUAGES CXX)
 
 
-set(CMAKE_CXX_STANDARD 20) # C++ standard to use
-set(CMAKE_CXX_STANDARD_REQUIRED True) # enforce C++ standard
+set(CMAKE_CXX_STANDARD 26) # C++ standard to use
+set(CMAKE_CXX_STANDARD_REQUIRED ON) # enforce C++ standard
+SET(CMAKE_CXX_EXTENSIONS  OFF)
 
+option(BUILD_TESTS "Build unit tests" ON)
 
-add_executable(stack_test ../test/stack.cpp) # make an executable for testing
+add_library(containers_lib
+        ../src/stack.cpp
+        ../src/ring_buffer.cpp
+) # create a containers library from the source files
 
-#target_compile_options(stack_test PRIVATE
-#        -save-temps=obj        # keep .i and .s
-#        -fverbose-asm          # annotate .s with helpful comments
-#        -masm=intel            # (optional) Intel syntax
-#)
+target_include_directories(containers_lib
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../include/my_library
+)
 
-include_directories("../include/my_library/")   # include the header files from the library
+if(BUILD_TESTS) #compile test scripts
 
-add_library(stack_library  
-    ../src/stack.cp
-) # create a stack library from the source files
+    # ---- Stack tests ----
+    add_executable(test_stack
+            ../test/stack.cpp
+    )
 
-target_link_libraries(stack_test stack_library) # link the stack library to the test executable++
+    target_link_libraries(test_stack PRIVATE containers_lib)
+
+#    # ---- Ring Buffer tests ----
+#    add_executable(test_buffer
+#            ../tests/test_buffer.cpp
+#    )
+#    target_link_libraries(test_buffer PRIVATE containers_lib)
+
+endif()

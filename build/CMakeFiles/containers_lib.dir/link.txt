@@ -1,0 +1,2 @@
+/usr/bin/ar qc libcontainers_lib.a CMakeFiles/containers_lib.dir/home/shalom/Documents/SoftwareProjects/Concurrency/C++/LockFreeContainers/src/stack.cpp.o CMakeFiles/containers_lib.dir/home/shalom/Documents/SoftwareProjects/Concurrency/C++/LockFreeContainers/src/ring_buffer.cpp.o
+/usr/bin/ranlib libcontainers_lib.a
