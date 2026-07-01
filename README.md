@@ -44,7 +44,7 @@ The library itself is header-only. To repurpose it you need:
 | C++17 compiler | language baseline | — |
 | pthreads | used by the reclamation library | system (linked via CMake `Threads::Threads`) |
 | [recordmanager](https://gitlab.com/trbot86/recordmanager) | DEBRA / hazard-pointer / EBR reclaimers | git submodule at `external/recordmanager` |
-| two [SetBench](https://gitlab.com/trbot86/setbench) headers (`plaf.h`, `errors.h`, optional `gstats*.h`) | platform/error macros required by recordmanager | vendored at `external/setbench-common` |
+| a few [SetBench](https://gitlab.com/trbot86/setbench) headers (`plaf.h`, `errors.h`, optional `gstats*.h`) | platform/error macros required by recordmanager | vendored at `external/setbench-common` |
 
 There are no other third-party dependencies. To use the containers in
 another project, add the three include directories (`include`,
@@ -85,7 +85,8 @@ Plain CMake still works too: `cmake -B build && cmake --build build`.
 (If you cloned without `--recursive`, run `git submodule update --init`.)
 
 ## Roadmap
-- Michael's Hazard Pointers — compare against DEBRA on the same containers
+- Benchmark reclaimers against each other (hazard pointers, EBR variants, and
+  DEBRA are all available via the `Reclaimer` template parameter)
 - Benchmarks under SetBench
 
 ## Credits
