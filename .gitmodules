@@ -1,0 +1,3 @@
+[submodule "external/recordmanager"]
+	path = external/recordmanager
+	url = https://gitlab.com/trbot86/recordmanager.git

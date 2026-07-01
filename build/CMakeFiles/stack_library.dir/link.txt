@@ -1,2 +1,0 @@
-/usr/bin/ar qc libstack_library.a CMakeFiles/stack_library.dir/home/shalom/Documents/Programming/LockFreeContainers/src/stack.cpp.o
-/usr/bin/ranlib libstack_library.a

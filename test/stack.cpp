@@ -1,68 +1,55 @@
+#include "../include/lockfree/stack.h"
 
-#include "../include/my_library/stack.h"
-#include "../src/stack.cpp"
-#include <iostream> // For logging
-#include <thread> // For multithreading
-#include <vector> // For managing multiple threads
+#include <cassert>
+#include <iostream>
+#include <thread>
+#include <vector>
 
+int main() {
+    constexpr int kThreads = 10;
+    Stack::stack<int> stack(kThreads);
 
-int main(){
-
-    Stack::stack<int> stack;
-    std::vector<std::thread> threads; //vector for storing threads of control
-
-    // ---------- 1. Sequential behaviour ----------
-
-    auto push = [&stack](int value) {
-        stack.push(value);
-    };
-
-
-    auto pop = [&stack]() {
-        stack.pop();
-    };
-
-
-    //Testing push operation with multiple threads
-    for(int i = 0; i < 10; ++i) {
-        threads.emplace_back(push, i);
-    }  
-
-    for(auto& t : threads) {
-        t.join();
+    // ---------- 1. Concurrent pushes ----------
+    std::vector<std::thread> threads;
+    for (int tid = 0; tid < kThreads; ++tid) {
+        threads.emplace_back([&, tid] {
+            stack.init_thread(tid);
+            stack.push(tid, tid);
+        });
     }
-    
-    stack.print(); // Print the stack contents after pushing
-    threads.clear(); // Clear the vector for new threads
+    for (auto& t : threads) t.join();
+    stack.print();
+    threads.clear();
 
-    //Testing pop operation with multiple threads
-    for(int i = 0; i < 10; ++i) {
-        threads.emplace_back(pop);
+    // ---------- 2. Concurrent pops ----------
+    for (int tid = 0; tid < kThreads; ++tid) {
+        threads.emplace_back([&, tid] {
+            stack.init_thread(tid);
+            auto v = stack.pop(tid);
+            assert(v.has_value()); // 10 pushes happened, so all 10 pops succeed
+        });
     }
+    for (auto& t : threads) t.join();
+    stack.print();
+    stack.init_thread(0); // main thread operates as tid 0 (workers are joined)
+    assert(!stack.pop(0).has_value()); // empty is now distinguishable from 0
+    threads.clear();
 
-    for(auto& t : threads) {
-        t.join();
+    // ---------- 3. Mixed concurrent push/pop ----------
+    for (int tid = 0; tid < kThreads; ++tid) {
+        threads.emplace_back([&, tid] {
+            stack.init_thread(tid);
+            for (int i = 0; i < 1000; ++i) {
+                if ((i + tid) % 2 == 0) stack.push(tid, i);
+                else                    stack.pop(tid);
+            }
+        });
     }
-
-    stack.print(); // Print the stack contents after pushing
-    threads.clear(); // Clear the vector for new threads
-
-    //Testing push/pop operation with multiple threads
-    for(int i = 0; i < 10; ++i) {
-        if(i % 2 == 0) {
-            stack.push(i);
-        } else {
-            stack.pop(); 
-        }
-    }
-
-    for(auto& t : threads) {
-        t.join();
-    }
-
-    stack.print(); // Print the stack contents after pushing
+    for (auto& t : threads) t.join();
+    // deinit only after ALL threads are quiescent (DEBRA requirement)
+    for (int tid = 0; tid < kThreads; ++tid) stack.deinit_thread(tid);
+    stack.print();
 
     std::cout << "All threads finished." << std::endl;
     return 0;
-
 }

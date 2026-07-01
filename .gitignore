@@ -1,0 +1,9 @@
+# Build artifacts (out-of-source builds live here)
+build/
+
+# IDE
+.idea/
+.vscode/
+
+# Core dumps
+core.*
