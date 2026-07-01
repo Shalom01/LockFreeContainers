@@ -73,11 +73,14 @@ test/                      unit & stress tests
 ```bash
 git clone --recursive https://github.com/Shalom01/LockFreeContainers.git
 cd LockFreeContainers
-mkdir build && cd build
-cmake ..
-make
-./test_stack && ./test_mtf_list && ./test_reclamation
+cmake --preset release        # configure (Ninja, into build/release/)
+cmake --build --preset release
+ctest --preset release        # run all tests
 ```
+
+Presets: `release` (RelWithDebInfo), `debug` (asserts on), and `tsan`
+(ThreadSanitizer; requires `libtsan`, e.g. `sudo dnf install libtsan`).
+Plain CMake still works too: `cmake -B build && cmake --build build`.
 
 (If you cloned without `--recursive`, run `git submodule update --init`.)
 

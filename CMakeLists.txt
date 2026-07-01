@@ -33,10 +33,12 @@ target_include_directories(containers_lib INTERFACE
 )
 target_link_libraries(containers_lib INTERFACE recordmanager)
 
-# ---- Tests ----
+# ---- Tests (run with `ctest`) ----
 if(BUILD_TESTS)
+    enable_testing()
     foreach(name stack mtf_list reclamation)
         add_executable(test_${name} test/${name}.cpp)
         target_link_libraries(test_${name} PRIVATE containers_lib)
+        add_test(NAME ${name} COMMAND test_${name})
     endforeach()
 endif()
