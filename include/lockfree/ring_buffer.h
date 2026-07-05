@@ -5,11 +5,22 @@
 #pragma once
 
 #include <atomic>
+#include <cstddef> //for std::size_t
 #include <utility> //for move semantics
 
 namespace RingBuffer {
 
-// Single-producer single-consumer (SPSC) lock-free ring buffer.
+// Cache line size used to keep the producer and consumer on separate lines.
+// std::hardware_destructive_interference_size is C++17 but not exposed by every
+// standard library, so we pin it to the common 64-byte line.
+constexpr std::size_t kCacheLine = 64;
+
+// Single-producer single-consumer (SPSC) wait-free ring buffer.
+//
+// Wait-free: enqueue()/dequeue() each run a bounded number of steps with no
+// retry loops. Cache-aware layout: the ring storage, the producer index and the
+// consumer index each sit on their own cache line, so the producer and consumer
+// threads never falsely share (contend on) the same line.
 template <typename V, size_t N>
 class buffer {
 
@@ -54,9 +65,9 @@ public:
     }
 
     private:
-        V ring [N]; //the ring buffer
-        std::atomic<size_t> producer = 0; //the produced index
-        std::atomic<size_t> consumer = 0; //the consumer index
+        alignas(kCacheLine) V ring [N]; //the ring buffer storage (own cache line)
+        alignas(kCacheLine) std::atomic<size_t> producer = 0; //the produced index (own cache line)
+        alignas(kCacheLine) std::atomic<size_t> consumer = 0; //the consumer index (own cache line)
 };
 
 }

@@ -18,6 +18,8 @@ distinguishable from a default-constructed value.
 ### SPSC Ring Buffer — [`include/lockfree/ring_buffer.h`](include/lockfree/ring_buffer.h)
 A fixed-capacity single-producer, single-consumer queue using only
 acquire/release atomics on the two indices. Wait-free for both threads.
+The ring storage and the two indices are each cache-line-aligned
+(`alignas(64)`) so the producer and consumer never falsely share a line.
 
 ### Move-to-Front List — [`include/lockfree/mtf_list.h`](include/lockfree/mtf_list.h)
 A lock-free self-adjusting list implementing a linearizable dynamic set
@@ -66,6 +68,7 @@ include/lockfree/          the library (header-only)
 external/recordmanager/    Trevor Brown's reclamation library (submodule)
 external/setbench-common/  vendored SetBench platform headers
 test/                      unit & stress tests
+bench/                     throughput/latency microbenchmarks
 ```
 
 ## Building & Running Tests
@@ -83,6 +86,18 @@ Presets: `release` (RelWithDebInfo), `debug` (asserts on), and `tsan`
 Plain CMake still works too: `cmake -B build && cmake --build build`.
 
 (If you cloned without `--recursive`, run `git submodule update --init`.)
+
+## Benchmarks
+
+`bench/throughput.cpp` measures throughput (Mops/s) and average latency
+(ns/op) for the containers. Build with the `release` preset for
+representative numbers, then run the binary directly (it is not part of
+`ctest`):
+
+```bash
+cmake --build --preset release --target bench_throughput
+./build/release/bench_throughput
+```
 
 ## Roadmap
 - Benchmark reclaimers against each other (hazard pointers, EBR variants, and

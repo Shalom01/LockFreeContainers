@@ -9,6 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for IDE IntelliSense/clangd
 
 option(BUILD_TESTS "Build unit tests" ON)
+option(BUILD_BENCH "Build throughput/latency benchmarks" ON)
 
 # ---- Dependency: Trevor Brown's recordmanager (SMR: DEBRA, hazard pointers, ...) ----
 # Header-only; pulled in as a git submodule at external/recordmanager, with
@@ -36,9 +37,15 @@ target_link_libraries(containers_lib INTERFACE recordmanager)
 # ---- Tests (run with `ctest`) ----
 if(BUILD_TESTS)
     enable_testing()
-    foreach(name stack mtf_list reclamation)
+    foreach(name stack mtf_list reclamation ring_buffer)
         add_executable(test_${name} test/${name}.cpp)
         target_link_libraries(test_${name} PRIVATE containers_lib)
         add_test(NAME ${name} COMMAND test_${name})
     endforeach()
+endif()
+
+# ---- Benchmarks (not part of ctest; run the binary directly) ----
+if(BUILD_BENCH)
+    add_executable(bench_throughput bench/throughput.cpp)
+    target_link_libraries(bench_throughput PRIVATE containers_lib)
 endif()
