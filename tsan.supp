@@ -1,0 +1,10 @@
+# ThreadSanitizer suppressions.
+#
+# Trevor Brown's recordmanager (external/recordmanager) synchronizes with
+# platform fences and volatile idioms from setbench's plaf.h that TSan cannot
+# model, so it reports false-positive races inside the reclaimers (e.g.
+# reclaimer_debra.h's epoch announce array). Suppress reports whose top frame
+# is in the vendored library; our own headers under include/lockfree remain
+# fully instrumented.
+race:external/recordmanager
+race:external/setbench-common
