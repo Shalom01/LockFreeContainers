@@ -74,8 +74,8 @@ bench/                     throughput/latency microbenchmarks
 ## Building & Running Tests
 
 ```bash
-git clone --recursive https://github.com/Shalom01/lock_free_containers.git
-cd lock_free_containers
+git clone --recursive https://github.com/Shalom01/lock_free.git
+cd lock_free
 cmake --preset release        # configure (Ninja, into build/release/)
 cmake --build --preset release
 ctest --preset release        # run all tests
