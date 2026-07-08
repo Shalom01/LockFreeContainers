@@ -35,7 +35,7 @@
 // for any operation that starts later (Lemma A.15).
 //
 // Threading contract: construct with the max number of threads, and each
-// thread must call init_thread(tid) with a distinct tid in [0, numThreads)
+// thread must call init_thread(tid) with a distinct tid in [0, num_threads)
 // before its first operation.
 
 namespace MTF {
@@ -67,17 +67,17 @@ private:
     using MemMgr = record_manager<Reclaimer, allocator_new<>, pool_none<>, Node, Op>;
 
 public:
-    explicit mtf_list(int numThreads) : rm_(numThreads) {
+    explicit mtf_list(int num_threads) : rm_(num_threads) {
         // Initial chain Head = x2 -> x1 -> sentinel (Figure 2).
         // The sentinel holds a dummy op so it can never be claimed; the two
         // extra nodes guarantee an unclaimed node at both ends of the list,
         // so Remove always finds unmarked neighbours.
         rm_.initThread(0); // construction happens on one thread; use tid 0
-        Node* sentinel = allocNode(0, 0);
+        Node* sentinel = alloc_node(0, 0);
         sentinel->op.store(&dummy_op_, std::memory_order_relaxed);
         head_.store(sentinel, std::memory_order_relaxed);
-        tryAppend(sentinel, allocNode(0, 1));
-        tryAppend(head_.load(), allocNode(0, 2));
+        try_append(sentinel, alloc_node(0, 1));
+        try_append(head_.load(), alloc_node(0, 2));
     }
 
     ~mtf_list() {
@@ -122,43 +122,43 @@ public:
     bool remove(int tid, const Key& k) {     // "Delete" in the paper
         auto guard = rm_.getGuard(tid);
         Node* node = publish(tid, k, OpType::del);
-        return removeMatches(tid, node);     // remove nodes with key k behind node
+        return remove_matches(tid, node);     // remove nodes with key k behind node
     }
 
 private:
     // ---- helpers -----------------------------------------------------------
 
-    Node* allocNode(int tid, int64_t serial) {
+    Node* alloc_node(int tid, int64_t serial) {
         Node* n = rm_.template allocate<Node>(tid); // default-constructed
-        n->serial = serial; // safe: published only later, via CAS in tryAppend
+        n->serial = serial; // safe: published only later, via CAS in try_append
         return n;
     }
 
-    Op* allocOp(int tid, const Key& k, OpType t) {
+    Op* alloc_op(int tid, const Key& k, OpType t) {
         Op* op = rm_.template allocate<Op>(tid);
         op->key = k;
         op->type.store(t, std::memory_order_relaxed); // published with the op CAS
         return op;
     }
 
-    static OpType typeOf(Node* x) {
+    static OpType type_of(Node* x) {
         Op* o = x->op.load(std::memory_order_acquire);
         return o ? o->type.load(std::memory_order_acquire) : OpType::dummy;
     }
 
-    static bool keyMatches(Node* x, const Key& k) {
+    static bool key_matches(Node* x, const Key& k) {
         Op* o = x->op.load(std::memory_order_acquire);
         return o && o->type.load(std::memory_order_acquire) != OpType::dummy && o->key == k;
     }
 
-    static bool isMatchingDelete(Node* x, const Key& k) {
+    static bool is_matching_delete(Node* x, const Key& k) {
         Op* o = x->op.load(std::memory_order_acquire);
         return o && o->type.load(std::memory_order_acquire) == OpType::del && o->key == k;
     }
 
     // ---- PDL (Algorithm 3) -------------------------------------------------
 
-    bool tryAppend(Node* x, Node* y) {
+    bool try_append(Node* x, Node* y) {
         Node* w = x->right.load();
         if (w != nullptr) {
             Node* expected = nullptr;
@@ -179,25 +179,25 @@ private:
     // endpoints whose pointers were CASed to skip over x.
     // Whichever caller completes the splice first also retires x for
     // deferred reclamation (exactly once, via the retired flag).
-    std::pair<Node*, Node*> removeNode(int tid, Node* x) {
+    std::pair<Node*, Node*> remove_node(int tid, Node* x) {
         x->mark.store(true);
         Node* right = x->right.load();
         Node* left  = x->left.load();
         while (true) {
             while (right->mark.load()) right = right->right.load(); // outward to
             while (left->mark.load())  left  = left->left.load();   // unmarked nodes
-            Node* leftRight = left->right.load();
-            Node* rightLeft = right->left.load();
+            Node* left_right = left->right.load();
+            Node* right_left = right->left.load();
             if (right->mark.load() || left->mark.load()) continue;
-            if (!left->right.compare_exchange_strong(leftRight, right)) continue;
-            if (!right->left.compare_exchange_strong(rightLeft, left)) continue;
+            if (!left->right.compare_exchange_strong(left_right, right)) continue;
+            if (!right->left.compare_exchange_strong(right_left, left)) continue;
             break;
         }
-        retireNode(tid, x);
+        retire_node(tid, x);
         return {left, right};
     }
 
-    void retireNode(int tid, Node* x) {
+    void retire_node(int tid, Node* x) {
         if (!x->retired.exchange(true)) { // first completed Remove retires
             Op* op = x->op.load();
             if (op != nullptr && op != &dummy_op_) rm_.retire(tid, op);
@@ -208,7 +208,7 @@ private:
     // ---- Publish (Algorithm 2, lines 27-35) --------------------------------
 
     Node* publish(int tid, const Key& k, OpType t) {
-        Op* op = allocOp(tid, k, t);
+        Op* op = alloc_op(tid, k, t);
         Node* node = nullptr;
         do {
             Node* head = head_.load();
@@ -217,8 +217,8 @@ private:
             if (second->op.compare_exchange_strong(expected, op)) {
                 node = second; // claimed the PDL's second node
             }
-            Node* fresh = allocNode(tid, head->serial + 1);
-            if (!tryAppend(head, fresh)) {
+            Node* fresh = alloc_node(tid, head->serial + 1);
+            if (!try_append(head, fresh)) {
                 rm_.deallocate(tid, fresh); // never published: free immediately
             }
         } while (node == nullptr);
@@ -234,9 +234,9 @@ private:
         Node* curr  = node->right.load();
 
         while (curr->serial > std::max<int64_t>(0, node->end.load() - 1)
-               && !isMatchingDelete(curr, k)) {
-            if (keyMatches(curr, k)) {
-                if (typeOf(curr) == OpType::insert)
+               && !is_matching_delete(curr, k)) {
+            if (key_matches(curr, k)) {
+                if (type_of(curr) == OpType::insert)
                     node->end.store(curr->serial); // record k as present
                 if (first == nullptr) first = curr;
                 last = curr;
@@ -253,55 +253,55 @@ private:
             node->op.load()->type.store(OpType::insert); // promote to insert node
             if (first != nullptr) {
                 first->remove_req.store(true);           // ask newest match to remove itself
-                if (first->traversed.load()) removeNode(tid, first);
+                if (first->traversed.load()) remove_node(tid, first);
             }
         }
-        if (typeOf(node) == OpType::search || node->remove_req.load())
-            removeNode(tid, node);         // remove redundant node
+        if (type_of(node) == OpType::search || node->remove_req.load())
+            remove_node(tid, node);         // remove redundant node
 
         return node->end.load() > 0;
     }
 
     // ---- RemoveMatches (Algorithm 2, lines 54-67) ---------------------------
 
-    bool removeMatches(int tid, Node* node) {
+    bool remove_matches(int tid, Node* node) {
         const Key k = node->op.load()->key;
         std::vector<Node*> matches;
         Node* curr = node->right.load();
 
-        while (curr->serial > 0 && !isMatchingDelete(curr, k)) {
-            if (keyMatches(curr, k)) matches.push_back(curr);
+        while (curr->serial > 0 && !is_matching_delete(curr, k)) {
+            if (key_matches(curr, k)) matches.push_back(curr);
             curr = curr->right.load();
         }
 
         // Find the oldest matching insert node visited.
-        int oldestInsert = -1;
+        int oldest_insert = -1;
         for (int i = static_cast<int>(matches.size()) - 1; i >= 0; --i) {
-            if (typeOf(matches[i]) == OpType::insert) { oldestInsert = i; break; }
+            if (type_of(matches[i]) == OpType::insert) { oldest_insert = i; break; }
         }
 
         // Remove matching insert/search nodes visited.
         // MODIFIED: track the splice endpoints of the previous Remove; a match
         // strictly between them was already marked (some Remove was invoked on
         // it) and already physically bypassed, so re-removing it is redundant.
-        Node* spliceLeft  = nullptr;
-        Node* spliceRight = nullptr;
+        Node* splice_left  = nullptr;
+        Node* splice_right = nullptr;
         for (int i = 0; i < static_cast<int>(matches.size()); ++i) {
-            if (i < oldestInsert)
+            if (i < oldest_insert)
                 matches[i]->end.store(matches[i + 1]->serial); // inform newer matches
-            const bool alreadySpliced =
-                spliceLeft != nullptr
-                && spliceLeft->serial  > matches[i]->serial
-                && matches[i]->serial > spliceRight->serial;
-            if (!alreadySpliced) {
-                auto [l, r] = removeNode(tid, matches[i]);
-                spliceLeft = l;
-                spliceRight = r;
+            const bool already_spliced =
+                splice_left != nullptr
+                && splice_left->serial  > matches[i]->serial
+                && matches[i]->serial > splice_right->serial;
+            if (!already_spliced) {
+                auto [l, r] = remove_node(tid, matches[i]);
+                splice_left = l;
+                splice_right = r;
             }
         }
 
-        removeNode(tid, node);             // remove this delete node
-        return oldestInsert >= 0;          // was k found in the set?
+        remove_node(tid, node);             // remove this delete node
+        return oldest_insert >= 0;          // was k found in the set?
     }
 
     MemMgr rm_;

@@ -19,7 +19,7 @@
 // the same purpose but is typically NOT lock-free (see is_lock_free()).
 //
 // Threading contract: construct with the max number of threads; each thread
-// calls init_thread(tid) with a distinct tid in [0, numThreads) before its
+// calls init_thread(tid) with a distinct tid in [0, num_threads) before its
 // first operation, and deinit_thread(tid) when done.
 
 namespace Stack {
@@ -35,7 +35,7 @@ private:
     using MemMgr = record_manager<Reclaimer, allocator_new<>, pool_none<>, Node>;
 
 public:
-    explicit stack(int numThreads) : rm_(numThreads) {
+    explicit stack(int num_threads) : rm_(num_threads) {
         rm_.initThread(0); // construction happens on one thread
     }
 
